@@ -1,5 +1,6 @@
 class API {
-    API_URL = "https://weatherapp.app01.prd.tor.quazi.co/";
+    // API_URL = "https://weatherapp.app01.prd.tor.quazi.co/";
+    API_URL = "http://192.168.0.122:4000/"
 
     async request(endpoint, parameters, method = "GET") {
         let request = {
@@ -26,6 +27,10 @@ class API {
 
     get (city = ["Toronto"]) {
         return this.request("get", { cities: city }, "POST").then(resp => resp.json());
+    }
+
+    getForecast (city = "Toronto") {
+        return this.request("get/forecast", { city }, "POST").then(resp => resp.json());
     }
 
 }

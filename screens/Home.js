@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { StyleSheet, Text, View, ScrollView, Animated, Image, TouchableOpacity } from 'react-native'
 
 import { useWindowDimensions } from 'react-native';
@@ -12,6 +12,11 @@ import FeatherIconPlus from '../assets/plus.png';
 import FeatherIconSearch from '../assets/search.png';
 import CityView from '../components/CityView';
 
+// import BottomSheet from '@gorhom/bottom-sheet';
+
+
+
+
 const Home = ({ navigation }) => {
 
     const api = new API();
@@ -21,14 +26,8 @@ const Home = ({ navigation }) => {
     const [allData, setAllData] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const getDetails = (data) => {
-        navigation.navigate("Details", {
-            ...data
-        });
-    }
-
     const getFromAPI = async () => {
-        return api.get(["Toronto", "Dhaka", "Azores", "Tehran", "London"])
+        return api.get(["Toronto", "Athens"])
             .then(async (resp) => {
                 try {
                     let data = { data: resp, retrieved: Date.now() };
@@ -96,13 +95,13 @@ const Home = ({ navigation }) => {
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
                 onScroll={Animated.event(
-                    [{nativeEvent: {contentOffset: {x: scrollX}}}],
+                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
                     { useNativeDriver: false },
                 )}
                 scrollEventThrottle={1}>
                 {allData && allData?.data &&
                     allData.data.map((city, index) => {
-                        return (<CityView key={index} city={city} getDetails={getDetails}/>);
+                        return (<CityView key={index} city={city} />);
                     })
                 }
             </ScrollView>
@@ -122,6 +121,7 @@ const Home = ({ navigation }) => {
                     );
                 })}
             </View>
+
         </>
     )
 };
@@ -139,8 +139,9 @@ const styles = StyleSheet.create({
     },
     indicatorWrapper: {
         position: 'absolute',
-        bottom: 100,
-        left: 20,
+        bottom: 130,
+        left: 0,
+        right: 0,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
@@ -151,6 +152,18 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         marginHorizontal: 4,
         backgroundColor: '#fff',
+    },
+    container: {
+        flex: 1,
+        padding: 55,
+        backgroundColor: 'grey',
+
+    },
+    contentContainer: {
+        flex: 1,
+        alignItems: 'center',
+        zIndex: 15,
+
     }
 });
 

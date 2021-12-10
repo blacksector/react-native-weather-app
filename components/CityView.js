@@ -1,20 +1,29 @@
-import React, { useState } from 'react'
-
+import React, { useState, useRef, useEffect } from 'react'
 import { StyleSheet, ImageBackground, View, Text } from 'react-native';
-
 import { useWindowDimensions } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API from '../utils/api';
 import * as WebBrowser from 'expo-web-browser';
 
 import convertUnits from '../utils/convertUnits';
 
-function CityView({ city, getDetails }) {
+import BottomSheet from 'reanimated-bottom-sheet';
+import HorizontalLine from '../components/HorizontalLine';
+import DetailsComponent from './DetailsComponent';
+import titleCase from '../utils/titleCase';
 
-    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+
+
+function CityView({ city }) {
+
+    const api = new API();
+    
     const [units, setUnits] = useState("celsius");
     const [randomImage, setRandomImage] = useState(Math.floor(Math.random() * 10));
 
-    
+    const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+    const bottomSheetRef = useRef();
 
     const getBackground = (city) => {
         return city.data.images.results[randomImage].urls.regular || city.data.images.results[0].urls.regular;
@@ -28,48 +37,62 @@ function CityView({ city, getDetails }) {
             height: windowHeight
         }} blurRadius={10}>
             <View style={styles.container}>
-                {city?.data && (
-                    <View style={{ flexGrow: 4, marginTop: 85 }}>
-                        <View style={styles.tempContainer}>
-                            <Text style={styles.tempText}>
-                                {Math.round(convertUnits(units, city.data.weather.main.temp) || 0)}
+                <View style={{marginLeft: "5%", width: "100%"}}>
+                    {city?.data && (
+                        <View style={{ flexGrow: 4, marginTop: 85 }}>
+                            <View style={styles.tempContainer}>
+                                <Text style={styles.tempText}>
+                                    {Math.round(convertUnits(units, city.data.weather.main.temp) || 0)}
+                                </Text>
+                                <Text style={styles.degrees}>
+                                    &deg;{units === "celsius" ? "C" : units === "fahrenheit" ? "F" : "K"}
+                                </Text>
+
+                            </View>
+
+                            <Text style={styles.cityText}>
+                                {city.data.weather.name}
                             </Text>
-                            <Text style={styles.degrees}>
-                                &deg;{units === "celsius" ? "C" : units === "fahrenheit" ? "F" : "K"}
-                            </Text>
+
+                            <View style={styles.smallInfoContainer}>
+                                <Text style={styles.conditionText}>
+                                    {titleCase(city.data.weather.weather[0].description)}
+                                </Text>
+                                <Text style={styles.feelsLike}>
+                                    <Text>Feels Like {Math.round(convertUnits(units, city.data.weather.main.feels_like) || 0)}</Text>
+                                    <Text>&deg;{units === "celsius" ? "C" : units === "fahrenheit" ? "F" : "K"}</Text>
+                                </Text>
+                            </View>
+
 
                         </View>
-
-                        <Text style={styles.cityText}>
-                            {city.data.weather.name}
-                        </Text>
-
-                        <View style={styles.smallInfoContainer}>
-                            <Text style={styles.conditionText}>
-                                {city.data.weather.weather[0].description}
-                            </Text>
-                            <Text style={styles.feelsLike}>
-                                <Text>Feels Like {Math.round(convertUnits(units, city.data.weather.main.feels_like) || 0)}</Text>
-                                <Text>&deg;{units === "celsius" ? "C" : units === "fahrenheit" ? "F" : "K"}</Text>
-                            </Text>
-                            <Text
-                                style={styles.detailsText}
-                                onPress={() => {
-                                    getDetails({city, randomImage, units})
-                                }}>
-                                View Details
-                            </Text>
-                        </View>
+                    )}
+                </View>
+                <BottomSheet
+                    ref={bottomSheetRef}
+                    snapPoints={[80, windowHeight - (windowHeight * 0.20), windowHeight]}
+                    borderRadius={0}
+                    renderContent={() => (
+                        <>
+                            <HorizontalLine />
+                            <View
+                                style={{
+                                    backgroundColor: 'white',
+                                    paddingTop: 40,
+                                    paddingLeft: 10,
+                                    paddingRight: 10,
+                                    height: windowHeight,
+                                    maxWidth: windowWidth
+                                }}
+                            >
 
 
-                    </View>
-                )}
-                <View style={{
-                    flex: 1,
-                    flexGrow: 1,
-                    justifyContent: "center",
-                    alignItems: "flex-end",
-                }}>
+                                <DetailsComponent forecast={city.data.forecast} />
+
+                            </View>
+                        </>)}
+                />
+                <View style={styles.creditContainer}>
                     <Text style={styles.credit}>
                         <Text>Photo by </Text>
                         <Text style={{ textDecorationLine: "underline" }} onPress={() => {
@@ -95,7 +118,7 @@ const shadow = {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginLeft: "5%",
+        // marginLeft: "5%",
         marginTop: "10%"
     },
     tempContainer: {
@@ -147,6 +170,16 @@ const styles = StyleSheet.create({
         color: "white",
         textDecorationLine: "underline",
         ...shadow
+    },
+    creditContainer: {
+        position: 'absolute',
+        bottom: 100,
+        left: 0,
+        right: 0,
+        width: "100%",
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     credit: {
         color: "white",

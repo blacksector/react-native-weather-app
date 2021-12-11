@@ -29,8 +29,8 @@ class API {
         return this.request("get", { cities: city }, "POST").then(resp => resp.json());
     }
 
-    getForecast (city = "Toronto") {
-        return this.request("get/forecast", { city }, "POST").then(resp => resp.json());
+    getWithCoordinates (lat, long) {
+        return this.request("get/coordinates", { lat, long }, "POST").then(resp => resp.json());
     }
 
 }

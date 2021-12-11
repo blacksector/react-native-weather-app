@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 
 import { format, formatDistance } from "date-fns";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons'
+
+import titleCase from '../utils/titleCase';
 
 // import DayView from './DayView';
 import DayHeader from './DayHeader';
@@ -57,7 +61,6 @@ const DetailsComponent = ({ forecast }) => {
 
     useEffect(() => {
         if (days !== null) {
-            console.log(days);
             setLoading(false);
         }
     }, [days])
@@ -72,40 +75,53 @@ const DetailsComponent = ({ forecast }) => {
                 {forecast.city.name} {forecast.city.country}
             </Text>
             <Text style={styles.subHeading}>
-                {format(new Date(), "eeee, MMM do, y")}
+                {format(calculateOffset(new Date().getTime()/1000), "eeee, MMM do, y")}
             </Text>
             <View style={styles.sideBySide}>
                 {(showSunFocus === "sunrise" || showSunFocus === "both") &&
                     <StatsCard>
-                        <Text style={styles.text}>Sunrise</Text>
+                        
                         {showSunFocus === "sunrise" &&
-                            <Text style={styles.text}>
-                                {formatDistance(forecast.city.sunrise * 1000, new Date(), { addSuffix: true })}
+                            <Text style={[styles.timeText, styles.text]}>
+                                {titleCase(formatDistance(forecast.city.sunrise * 1000, new Date(), { addSuffix: true }))}
                             </Text>
                         }
                         {showSunFocus === "both" && 
-                            <Text style={styles.text}>
+                            <Text style={[styles.timeText, styles.text]}>
                                 {format(calculateOffset(forecast.city.sunrise), 'h:mm aa')}
                             </Text>
                         }
+                        <View style={styles.iconAndText}>
+                            <FontAwesomeIcon icon={faSun} color={'yellow'} />
+                            <Text style={styles.text}>
+                                Sunrise
+                            </Text>
+                        </View>
                     </StatsCard>
                 }
 
                 {(showSunFocus === "sunset" || showSunFocus === "both") &&
                     <StatsCard>
-                        <Text style={styles.text}>Sunset</Text>
                         {showSunFocus === "sunset" &&
-                            <Text style={styles.text}>
-                                {formatDistance(forecast.city.sunset * 1000, new Date(), { addSuffix: true })}
+                            <Text style={[styles.timeText, styles.text]}>
+                                {titleCase(formatDistance(forecast.city.sunset * 1000, new Date(), { addSuffix: true }))}
                             </Text>
                         }
                         {showSunFocus === "both" && 
-                            <Text style={styles.text}>
+                            <Text style={[styles.timeText, styles.text]}>
                                 {format(calculateOffset(forecast.city.sunset), 'h:mm aa')}
                             </Text>
                         }
+                        <View style={styles.iconAndText}>
+                            <FontAwesomeIcon icon={faMoon} color={'grey'} />
+                            <Text style={styles.text}>
+                                Sunset
+                            </Text>
+                        </View>
                     </StatsCard>
                 }
+            </View>
+            <View style={styles.sideBySide}>
 
             </View>
             {days !== false &&
@@ -131,14 +147,23 @@ const styles = StyleSheet.create({
         color: "white",
         marginBottom: 30
     },
+    timeText: {
+        fontSize: 20,
+    },
     text: {
-        color: "white"
+        color: "white",
+        textAlign: "center"
     },
     sideBySide: {
-        // display: "flex",
         flexDirection: "row",
         justifyContent: "space-around",
         width: "100%"
+    },
+    iconAndText: {
+        marginTop: 5,
+        justifyContent: "space-around", 
+        alignItems: "center", 
+        flexDirection: "row"
     }
 })
 

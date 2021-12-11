@@ -15,7 +15,7 @@ import titleCase from '../utils/titleCase';
 
 
 
-function CityView({ city }) {
+function CityView({ city, setHideIcons }) {
 
     const api = new API();
     
@@ -24,6 +24,10 @@ function CityView({ city }) {
 
     const { width: windowWidth, height: windowHeight } = useWindowDimensions();
     const bottomSheetRef = useRef();
+
+    // useEffect(() => {
+    //     console.log(bottomSheetRef);
+    // }, [bottomSheetRef])
 
     const getBackground = (city) => {
         return city.data.images.results[randomImage].urls.regular || city.data.images.results[0].urls.regular;
@@ -72,23 +76,29 @@ function CityView({ city }) {
                     ref={bottomSheetRef}
                     snapPoints={[80, windowHeight - (windowHeight * 0.20), windowHeight]}
                     borderRadius={0}
+                    onOpenStart={() => {
+                        setHideIcons(true);
+                        return true;
+                    }}
+                    onCloseEnd={() => {
+                        setHideIcons(false);
+                        return true;
+                    }}
                     renderContent={() => (
                         <>
                             <HorizontalLine />
                             <View
                                 style={{
-                                    backgroundColor: 'white',
+                                    backgroundColor: '#000000',
                                     paddingTop: 40,
                                     paddingLeft: 10,
                                     paddingRight: 10,
                                     height: windowHeight,
-                                    maxWidth: windowWidth
+                                    maxWidth: windowWidth,
+                                    zIndex: 500
                                 }}
                             >
-
-
                                 <DetailsComponent forecast={city.data.forecast} />
-
                             </View>
                         </>)}
                 />

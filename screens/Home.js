@@ -25,6 +25,7 @@ const Home = ({ navigation }) => {
 
     const [allData, setAllData] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [hideIcons, setHideIcons] = useState(false);
 
     const getFromAPI = async () => {
         return api.get(["Toronto", "Athens"])
@@ -81,14 +82,36 @@ const Home = ({ navigation }) => {
 
     return (
         <>
-            <View style={styles.appHeader}>
-                <TouchableOpacity onPress={() => { }}>
-                    <Image source={FeatherIconMenu} style={{ width: 25, height: 25 }} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }}>
-                    <Image source={FeatherIconPlus} style={{ width: 25, height: 25 }} />
-                </TouchableOpacity>
-            </View>
+            {!hideIcons && <>
+                <View style={styles.appHeader}>
+                    <TouchableOpacity onPress={() => { }}>
+                        <Image source={FeatherIconMenu} style={{ width: 25, height: 25 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => { }}>
+                        <Image source={FeatherIconPlus} style={{ width: 25, height: 25 }} />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.indicatorWrapper}>
+                    {allData && allData?.data && allData.data.map((city, index) => {
+                        const width = scrollX.interpolate({
+                            inputRange: [
+                                windowWidth * (index - 1),
+                                windowWidth * index,
+                                windowWidth * (index + 1),
+                            ],
+                            outputRange: [5, 12, 5],
+                            extrapolate: 'clamp',
+                        });
+                        return (
+                            <Animated.View key={index} style={[styles.normalDot, { width }]} />
+                        );
+                    })}
+                </View>
+            </>
+
+            }
+
 
             <ScrollView
                 horizontal={true}
@@ -101,27 +124,10 @@ const Home = ({ navigation }) => {
                 scrollEventThrottle={1}>
                 {allData && allData?.data &&
                     allData.data.map((city, index) => {
-                        return (<CityView key={index} city={city} />);
+                        return (<CityView key={index} city={city} setHideIcons={setHideIcons} />);
                     })
                 }
             </ScrollView>
-            <View style={styles.indicatorWrapper}>
-                {allData && allData?.data && allData.data.map((city, index) => {
-                    const width = scrollX.interpolate({
-                        inputRange: [
-                            windowWidth * (index - 1),
-                            windowWidth * index,
-                            windowWidth * (index + 1),
-                        ],
-                        outputRange: [5, 12, 5],
-                        extrapolate: 'clamp',
-                    });
-                    return (
-                        <Animated.View key={index} style={[styles.normalDot, { width }]} />
-                    );
-                })}
-            </View>
-
         </>
     )
 };
@@ -145,13 +151,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        zIndex: 1,
+        elevation: 0,
     },
     normalDot: {
         height: 5,
         width: 5,
         borderRadius: 4,
         marginHorizontal: 4,
-        backgroundColor: '#fff',
+        backgroundColor: '#fff'
     },
     container: {
         flex: 1,

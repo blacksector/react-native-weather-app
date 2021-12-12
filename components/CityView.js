@@ -17,6 +17,10 @@ import titleCase from '../utils/titleCase';
 
 import { getSettings } from '../utils/store';
 
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faLocationArrow } from '@fortawesome/free-solid-svg-icons';
+
+
 function CityView({ city, setHideIcons }) {
 
     const api = new API();
@@ -81,8 +85,6 @@ function CityView({ city, setHideIcons }) {
                                     <Text>&deg;{units === "celsius" ? "C" : units === "fahrenheit" ? "F" : "K"}</Text>
                                 </Text>
                             </View>
-
-
                         </View>
                     )}
                 </View>
@@ -102,24 +104,31 @@ function CityView({ city, setHideIcons }) {
                         <>
                             <HorizontalLine />
                             <ScrollView style={{
-                                        backgroundColor: '#000000',
-                                        paddingTop: 40,
-                                        paddingLeft: 10,
-                                        paddingRight: 10,
-                                        height: windowHeight,
-                                        maxWidth: windowHeight - (windowHeight * 0.20),
-                                        zIndex: 500
-                                    }}>
+                                backgroundColor: '#000000',
+                                paddingTop: 40,
+                                paddingLeft: 10,
+                                paddingRight: 10,
+                                height: windowHeight,
+                                maxWidth: windowHeight - (windowHeight * 0.20),
+                                zIndex: 500
+                            }}>
                                 <View>
                                     <DetailsComponent forecast={city.data.forecast} />
                                     <View ><Text style={{
-        marginTop: 25
-    }}>Hello World!</Text></View>
+                                        marginTop: 25
+                                    }}>Hello World!</Text></View>
                                 </View>
                             </ScrollView>
                         </>
                     )}
                 />
+                {city.isLocation === true &&
+                    <View style={styles.locationContainer}>
+                        <Text style={styles.credit}>
+                            <Text><FontAwesomeIcon icon={faLocationArrow} color={'#AF52DE'} /></Text>
+                        </Text>
+                    </View>
+                }
                 <View style={styles.creditContainer}>
                     <Text style={styles.credit}>
                         <Text>Photo by </Text>
@@ -202,6 +211,16 @@ const styles = StyleSheet.create({
     creditContainer: {
         position: 'absolute',
         bottom: 100,
+        left: 0,
+        right: 0,
+        width: "100%",
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    locationContainer: {
+        position: 'absolute',
+        bottom: 150,
         left: 0,
         right: 0,
         width: "100%",

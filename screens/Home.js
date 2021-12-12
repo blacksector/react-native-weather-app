@@ -46,7 +46,7 @@ const Home = ({ navigation }) => {
                 // TODO: Couldn't get data from api,
                 // no network, or the API is down.
                 // Need a way to get a fallback image if
-                // not work is down.
+                // not working or is down.
                 console.log(err);
                 return [];
             })
@@ -117,7 +117,6 @@ const Home = ({ navigation }) => {
                         if (data.data.length !== 0) {
                             if (needsUpdate(data)) {
                                 let otherCities = await getFromAPI(getCities(data.data));
-                                console.log("otherCities", otherCities);
                                 data.data = otherCities;
                             }
                         }
@@ -155,8 +154,8 @@ const Home = ({ navigation }) => {
                         await AsyncStorage.setItem('weather_data', JSON.stringify(data));
                         setAllData(data);
                     }
-                } catch (e) {
-                    console.log(e);
+                } catch (err) {
+                    console.log(err);
                     return resp;
                 }
             })
@@ -178,7 +177,6 @@ const Home = ({ navigation }) => {
         useCallback(() => {
             async function checkWeatherDataUpdate() {
                 const allWeatherData = await getWeather();
-                console.log(allWeatherData);
                 if (Object.keys(allWeatherData).length === 0 || allWeatherData?.data?.length === 0) {
                     setErrorMsg('It seems like you do not have a city added, how about we add one?');
                 } else {

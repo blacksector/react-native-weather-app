@@ -113,12 +113,14 @@ function CityView({ city, setHideIcons }) {
                                 height: windowHeight - (windowHeight * 0.21),
                                 maxWidth: windowWidth,
                                 zIndex: 500
-                            }}>
+                            }}
+                            // contentContainerStyle={}
+                            >
                                 <View>
                                     <DetailsComponent settings={settings} forecast={city.data.forecast} weather={city.data.weather} />
                                     <View ><Text style={{
                                         marginTop: 25
-                                    }}>Hello World!</Text></View>
+                                    }}>&nbsp;</Text></View>
                                 </View>
                             </ScrollView>
                         </>

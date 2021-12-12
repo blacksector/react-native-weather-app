@@ -23,9 +23,6 @@ const DetailsComponent = ({ forecast, weather, settings }) => {
     }
 
     const sortForecast = () => {
-
-        console.log(weather)
-
         let sortedDays = {};
         for (let date of forecast.list) {
             let tempDate = date.dt_txt.split(" ")[0];
@@ -80,7 +77,7 @@ const DetailsComponent = ({ forecast, weather, settings }) => {
     }
 
     return (
-        <View style={{ minHeight: "100%" }}>
+        <View>
             <Text style={styles.heading}>
                 {forecast.city.name}, {forecast.city.country}
             </Text>

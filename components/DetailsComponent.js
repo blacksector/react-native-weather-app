@@ -33,14 +33,13 @@ const DetailsComponent = ({ forecast }) => {
         // show only sunrise, and vice-versa for sunset.
         // If it doesn't fall within those time frames, then
         // simply show the AM/PM values for both.
-        if (Math.abs((Date.now() / 1000) - (forecast.city.sunrise + forecast.city.timezone )) <= 1800) {
+        if (Math.abs(calculateOffset(Date.now() / 1000) - calculateOffset(forecast.city.sunrise)) / 1000 <= 1800) {
             setShowSunFocus("sunrise")
-        } else if (Math.abs((Date.now() / 1000) - (forecast.city.sunset + forecast.city.timezone)) <= 1800) {
+        } else if (Math.abs(calculateOffset(Date.now() / 1000) - calculateOffset(forecast.city.sunset)) / 1000 <= 1800) {
             setShowSunFocus("sunset")
         } else {
             setShowSunFocus("both");
         }
-
     }
 
     // We need this so that we can show
@@ -77,6 +76,12 @@ const DetailsComponent = ({ forecast }) => {
             <Text style={styles.subHeading}>
                 {format(calculateOffset(new Date().getTime()/1000), "eeee, MMM do, y")}
             </Text>
+            <StatsCard>
+                <Text style={styles.text}>
+                    Local Time: &nbsp;
+                    {format(calculateOffset(Date.now() / 1000), "h:mm aa")}
+                </Text>
+            </StatsCard>
             <View style={styles.sideBySide}>
                 {(showSunFocus === "sunrise" || showSunFocus === "both") &&
                     <StatsCard>

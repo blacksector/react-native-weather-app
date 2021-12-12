@@ -99,7 +99,7 @@ const Home = ({ navigation }) => {
             return;
         }
         // Permission was granted! First, we get the weather:
-        let location = await Location.getCurrentPositionAsync({});
+        let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Balanced});
         // setLocation(location);
 
         api.getWithCoordinates(location.coords.latitude, location.coords.longitude)

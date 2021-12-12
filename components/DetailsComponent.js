@@ -3,7 +3,7 @@ import { StyleSheet, View, Text } from 'react-native'
 
 import { format, formatDistance } from "date-fns";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons'
+import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 
 import titleCase from '../utils/titleCase';
 

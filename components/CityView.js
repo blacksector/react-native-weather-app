@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { StyleSheet, ImageBackground, View, Text } from 'react-native';
 import { useWindowDimensions } from 'react-native';
+
+import { useFocusEffect } from '@react-navigation/native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from '../utils/api';
@@ -13,21 +15,34 @@ import HorizontalLine from '../components/HorizontalLine';
 import DetailsComponent from './DetailsComponent';
 import titleCase from '../utils/titleCase';
 
-
+import { getSettings } from '../utils/store';
 
 function CityView({ city, setHideIcons }) {
 
     const api = new API();
     
-    const [units, setUnits] = useState("celsius");
+    const [units, setUnits] = useState(null);
     const [randomImage, setRandomImage] = useState(Math.floor(Math.random() * 10));
 
     const { width: windowWidth, height: windowHeight } = useWindowDimensions();
     const bottomSheetRef = useRef();
 
-    // useEffect(() => {
-    //     console.log(bottomSheetRef);
-    // }, [bottomSheetRef])
+    useEffect(async () => {
+        let settings = await getSettings();
+        console.log(settings);
+        setUnits(settings.units || "celsius");
+    }, [])
+
+    useFocusEffect(
+        useCallback(() => {
+            async function checkSettingsUpdate() {
+                const settings = await getSettings();
+                setUnits(settings?.units || "celsius");
+            }
+            checkSettingsUpdate();
+            return () => { };
+        }, [units])
+    );
 
     const getBackground = (city) => {
         return city.data.images.results[randomImage].urls.regular || city.data.images.results[0].urls.regular;

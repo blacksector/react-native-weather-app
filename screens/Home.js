@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { StyleSheet, Text, View, ScrollView, Animated, Image, TouchableOpacity, Button } from 'react-native'
 
+import { useFocusEffect } from '@react-navigation/native';
 import { useWindowDimensions } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getWeather } from '../utils/store';
 import API from '../utils/api';
 
 import Splash from './Splash';
@@ -24,7 +26,6 @@ const Home = ({ navigation }) => {
     const [allData, setAllData] = useState(false);
     const [loading, setLoading] = useState(true);
     const [hideIcons, setHideIcons] = useState(false);
-    const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(false);
 
     const unwrapCities = ({ city }) => ({ city });
@@ -100,7 +101,7 @@ const Home = ({ navigation }) => {
         }
         // Permission was granted! First, we get the weather:
         let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
+        // setLocation(location);
 
         api.getWithCoordinates(location.coords.latitude, location.coords.longitude)
             .then(async (resp) => {
@@ -163,17 +164,20 @@ const Home = ({ navigation }) => {
                 return {};
             })
             .finally(() => setLoading(false));
-
     }, []);
 
-    useEffect(() => {
-        // every time there is changes to allData,
-        // we could just have this listener update
-        // the local storage...
-        // disabled for now because we are still in development.
-        console.log("Updated allData...", allData);
-    }, [allData])
+    useFocusEffect(
+        useCallback(() => {
+            async function checkWeatherDataUpdate() {
+                const allWeatherData = await getWeather();
+                setAllData(typeof allWeatherData?.retrieved === 'number' ? allWeatherData : false);
+            }
+            checkWeatherDataUpdate();
+            return () => { };
+        }, [])
+    );
 
+    
 
     if (loading) {
         return <Splash isSplash={true} />;
@@ -195,7 +199,9 @@ const Home = ({ navigation }) => {
                     }}>
                         <Image source={FeatherIconMenu} style={{ width: 25, height: 25 }} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { }}>
+                    <TouchableOpacity onPress={() => {
+                        navigation.navigate("AddCity");
+                    }}>
                         <Image source={FeatherIconPlus} style={{ width: 25, height: 25 }} />
                     </TouchableOpacity>
                 </View>

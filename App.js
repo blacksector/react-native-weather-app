@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Home from './screens/Home';
 import Menu from './screens/Menu';
+import AddCity from './screens/AddCity';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,15 @@ export default function App() {
             headerShown: true,
             headerTransparent: false,
             title: "Settings"
+          }} 
+        />
+        <Stack.Screen 
+          name="AddCity" 
+          component={AddCity} 
+          options={{
+            headerShown: true,
+            headerTransparent: false,
+            title: "Find city"
           }} 
         />
       </Stack.Navigator>

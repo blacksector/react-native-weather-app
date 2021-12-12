@@ -59,6 +59,7 @@ const addCity = async (cityName) => {
             return true;
         })
         .catch(err => {
+            // Failed to add city :(
             console.log(err);
             return false;
         });

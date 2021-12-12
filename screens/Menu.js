@@ -77,7 +77,6 @@ const Menu = () => {
                                             <Button
                                                 onPress={async () => { 
                                                     if (await removeCity(item.data.weather.id)) {
-                                                        console.log("Deleted city...");
                                                         let newData = data
                                                         newData.data.splice(index, 1)
                                                         setData(newData);

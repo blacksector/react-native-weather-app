@@ -16,6 +16,7 @@ import CityView from '../components/CityView';
 
 import * as Location from 'expo-location';
 
+
 const Home = ({ navigation }) => {
 
     const api = new API();
@@ -27,19 +28,25 @@ const Home = ({ navigation }) => {
     const [hideIcons, setHideIcons] = useState(false);
     const [errorMsg, setErrorMsg] = useState(false);
 
-    const unwrapCities = ({ city }) => ({ city });
-
-    const getCities = () => {
+    // This just simplifies the data into a simple
+    // list of city names as strings (this is important)
+    // for the API.
+    const getCities = (data) => {
+        const unwrapCities = ({ city }) => ({ city });
         // We won't be using the coordinate type, only string type.
-        return allData?.data?.map((item) => unwrapCities(item).city).filter(item => typeof item === 'string')
+        return data?.map((item) => unwrapCities(item).city).filter(item => typeof item === 'string')
     }
 
     const getFromAPI = async (cities = null) => {
-        return api.get(cities === null ? getCities() : cities)
+        return api.get(cities === null ? getCities(allData.data) : cities)
             .then(async (resp) => {
                 return resp;
             })
             .catch(err => {
+                // TODO: Couldn't get data from api,
+                // no network, or the API is down.
+                // Need a way to get a fallback image if
+                // not work is down.
                 console.log(err);
                 return [];
             })
@@ -47,7 +54,7 @@ const Home = ({ navigation }) => {
     }
 
     const needsUpdate = (data) => {
-        if (((Date.now() - (data.retrieved)) / 1000) > 300) {
+        if (((Date.now() - (data.retrieved)) / 1000) > 30) {
             // Been more than 5 minutes, allow a new refresh:
             return true;
         } else {
@@ -56,16 +63,13 @@ const Home = ({ navigation }) => {
     }
 
     useEffect(async () => {
-
-        // await AsyncStorage.clear();
-
         const value = await AsyncStorage.getItem('weather_data');
 
         // First things first, we ask the user for their location:
         let { status } = await Location.requestForegroundPermissionsAsync();
         // Permission was not granted, here we can redirect them
-        // or create a new modal that asks them to enter a city
-        // or simply pre-fill it with Toronto.
+        // or create a button that redirects them to the AddCity page
+        // and asks them to enter a new city
         if (status !== 'granted') {
             if (value === null) {
                 // No data exists, user didn't allow location
@@ -110,11 +114,9 @@ const Home = ({ navigation }) => {
                     if (value !== null) {
                         // There is already other cities in the list :)
                         let data = JSON.parse(value);
-                            if (data.data.length !== 0) {
-                            // TODO: Check if any of the other data points will need
-                            // an update, if so, then update first!
+                        if (data.data.length !== 0) {
                             if (needsUpdate(data)) {
-                                let otherCities = await getFromAPI();
+                                let otherCities = await getFromAPI(getCities(data.data));
                                 console.log("otherCities", otherCities);
                                 data.data = otherCities;
                             }
@@ -159,24 +161,34 @@ const Home = ({ navigation }) => {
                 }
             })
             .catch(err => {
+                // TODO: API crashed or no network?
+                // Need a way to handle fallbacks!
                 console.log(err);
+                setErrorMsg('Network failure, or the API is down. Please try again later.');
                 return {};
             })
             .finally(() => setLoading(false));
     }, []);
 
+    // This is called when the screen is put back into focus
+    // we need this because otherwise if the user changed
+    // the state of units (from celsius to fahrenheit or kelvin)
+    // also useful for when the cities list changes.
     useFocusEffect(
         useCallback(() => {
             async function checkWeatherDataUpdate() {
                 const allWeatherData = await getWeather();
-                setAllData(typeof allWeatherData?.retrieved === 'number' ? allWeatherData : false);
+                if (allWeatherData.data.length === 0) {
+                    setErrorMsg('It seems like you do not have a city added, how about we add one?');
+                } else {
+                    setErrorMsg(null);
+                    setAllData(typeof allWeatherData?.retrieved === 'number' ? allWeatherData : false);
+                }
             }
             checkWeatherDataUpdate();
             return () => { checkWeatherDataUpdate() };
         }, [])
     );
-
-    
 
     if (loading) {
         return <Splash isSplash={true} />;
@@ -185,7 +197,7 @@ const Home = ({ navigation }) => {
     if (errorMsg) {
         return (<Splash>
             <Text style={{ color: "white", marginBottom: 15 }}>ERROR: {errorMsg}</Text>
-            <Button color="#333" onPress={() => { console.log("add city..."); }} title={`Add City`} />
+            <Button color="#333" onPress={() => { navigation.navigate('AddCity'); }} title={`Add City`} />
         </Splash>);
     }
 
@@ -222,9 +234,7 @@ const Home = ({ navigation }) => {
                     })}
                 </View>
             </>
-
             }
-
 
             <ScrollView
                 horizontal={true}

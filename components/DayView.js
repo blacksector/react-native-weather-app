@@ -14,8 +14,6 @@ import { format, formatDistance } from "date-fns";
 
 const DayView = ({ day }) => {
 
-    console.log(day);
-
     return (
         <View style={{
             display: "flex",

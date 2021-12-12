@@ -23,7 +23,6 @@ const DayHeader = ({ day }) => {
 
     useEffect(async () => {
         let settings = await getSettings();
-        console.log(settings);
         setUnits(settings.units || "celsius");
     }, [])
 

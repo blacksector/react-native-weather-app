@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TextInput, SafeAreaView, View, FlatList, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, TextInput, SafeAreaView, View, FlatList, TouchableOpacity } from 'react-native'
 
-import { HeaderBackButton } from '@react-navigation/native';
 import StatsCard from '../components/StatsCard';
 
 import { addCity } from '../utils/store';
@@ -49,19 +48,19 @@ const AddCity = ({ navigation }) => {
                 data={filtered}
                 extraData={refresh}
                 renderItem={({ item }) => {
-                    return (<TouchableHighlight onPress={async () => { 
+                    return (<TouchableOpacity onPress={async () => { 
                             let resp = await addCity(item.target);
-                            console.log(resp);
                             if (resp === true) {
                                 navigation.goBack();
                             } else {
+                                // TODO: Error handling, need to show the user something went wrong...
                                 console.log("Failed to add city...?");
                             }
                         }} >
                         <StatsCard>
                             <Text style={styles.cityName}>{item.target.split(",").join(", ")}</Text>
                         </StatsCard>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 );
                 }}
                 keyExtractor={(item, index) => `${item.target}${index}`}

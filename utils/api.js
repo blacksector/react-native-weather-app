@@ -1,6 +1,6 @@
 class API {
-    // API_URL = "https://weatherapp.app01.prd.tor.quazi.co/";
-    API_URL = "http://192.168.0.122:4000/"
+    API_URL = "https://weatherapp.app01.prd.tor.quazi.co/";
+    // API_URL = "http://192.168.0.122:4000/"
 
     async request(endpoint, parameters, method = "GET") {
         let request = {

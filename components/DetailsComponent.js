@@ -28,14 +28,15 @@ const DetailsComponent = ({ forecast }) => {
             }
         }
         setDays(sortedDays);
+
         // Let's calculate if sunrise is next or sunset.
-        // If sunrise is within +-30 mins of the current time
+        // If sunrise is within +-10 mins of the current time
         // show only sunrise, and vice-versa for sunset.
         // If it doesn't fall within those time frames, then
         // simply show the AM/PM values for both.
-        if (Math.abs(calculateOffset(Date.now() / 1000) - calculateOffset(forecast.city.sunrise)) / 1000 <= 1800) {
+        if (Math.abs(calculateOffset(Date.now() / 1000) - calculateOffset(forecast.city.sunrise)) / 1000 <= 600) {
             setShowSunFocus("sunrise")
-        } else if (Math.abs(calculateOffset(Date.now() / 1000) - calculateOffset(forecast.city.sunset)) / 1000 <= 1800) {
+        } else if (Math.abs(calculateOffset(Date.now() / 1000) - calculateOffset(forecast.city.sunset)) / 1000 <= 600) {
             setShowSunFocus("sunset")
         } else {
             setShowSunFocus("both");

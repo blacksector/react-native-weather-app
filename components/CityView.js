@@ -29,7 +29,6 @@ function CityView({ city, setHideIcons }) {
 
     useEffect(async () => {
         let settings = await getSettings();
-        console.log(settings);
         setUnits(settings.units || "celsius");
     }, [])
 
@@ -115,7 +114,8 @@ function CityView({ city, setHideIcons }) {
                             >
                                 <DetailsComponent forecast={city.data.forecast} />
                             </View>
-                        </>)}
+                        </>
+                    )}
                 />
                 <View style={styles.creditContainer}>
                     <Text style={styles.credit}>

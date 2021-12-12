@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "another-weather-app",
+    "name": "Another Weather App",
     "slug": "another-weather-app",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#333333"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -23,7 +23,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#333333"
       },
       "package": "co.quazi.anotherweatherapp"
     },

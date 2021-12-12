@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { StyleSheet, ImageBackground, View, Text } from 'react-native';
+import { StyleSheet, ImageBackground, View, Text, ScrollView } from 'react-native';
 import { useWindowDimensions } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
@@ -20,7 +20,7 @@ import { getSettings } from '../utils/store';
 function CityView({ city, setHideIcons }) {
 
     const api = new API();
-    
+
     const [units, setUnits] = useState("celsius");
     const [randomImage, setRandomImage] = useState(Math.floor(Math.random() * 10));
 
@@ -55,7 +55,7 @@ function CityView({ city, setHideIcons }) {
             height: windowHeight
         }} blurRadius={10}>
             <View style={styles.container}>
-                <View style={{marginLeft: "5%", width: "100%"}}>
+                <View style={{ marginLeft: "5%", width: "100%" }}>
                     {city?.data && (
                         <View style={{ flexGrow: 4, marginTop: 85 }}>
                             <View style={styles.tempContainer}>
@@ -88,7 +88,7 @@ function CityView({ city, setHideIcons }) {
                 </View>
                 <BottomSheet
                     ref={bottomSheetRef}
-                    snapPoints={[80, windowHeight - (windowHeight * 0.20), windowHeight]}
+                    snapPoints={[80, windowHeight - (windowHeight * 0.20)]}
                     borderRadius={0}
                     onOpenStart={() => {
                         setHideIcons(true);
@@ -101,19 +101,22 @@ function CityView({ city, setHideIcons }) {
                     renderContent={() => (
                         <>
                             <HorizontalLine />
-                            <View
-                                style={{
-                                    backgroundColor: '#000000',
-                                    paddingTop: 40,
-                                    paddingLeft: 10,
-                                    paddingRight: 10,
-                                    height: windowHeight,
-                                    maxWidth: windowWidth,
-                                    zIndex: 500
-                                }}
-                            >
-                                <DetailsComponent forecast={city.data.forecast} />
-                            </View>
+                            <ScrollView style={{
+                                        backgroundColor: '#000000',
+                                        paddingTop: 40,
+                                        paddingLeft: 10,
+                                        paddingRight: 10,
+                                        height: windowHeight,
+                                        maxWidth: windowHeight - (windowHeight * 0.20),
+                                        zIndex: 500
+                                    }}>
+                                <View>
+                                    <DetailsComponent forecast={city.data.forecast} />
+                                    <View ><Text style={{
+        marginTop: 25
+    }}>Hello World!</Text></View>
+                                </View>
+                            </ScrollView>
                         </>
                     )}
                 />

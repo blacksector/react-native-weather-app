@@ -7,6 +7,8 @@ import API from '../utils/api';
 import { formatDistance } from "date-fns";
 import StatsCard from '../components/StatsCard';
 
+import SwitchSelector from "react-native-switch-selector";
+
 import { getSettings, updateSettings, getWeather, removeCity } from '../utils/store';
 
 const Menu = () => {

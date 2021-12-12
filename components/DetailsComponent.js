@@ -7,7 +7,6 @@ import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 
 import titleCase from '../utils/titleCase';
 
-// import DayView from './DayView';
 import DayHeader from './DayHeader';
 import StatsCard from './StatsCard';
 
@@ -55,6 +54,8 @@ const DetailsComponent = ({ forecast }) => {
         );
     }
 
+    // Sort each forcast data into their respective
+    // days so it's easier to work with.
     useEffect(() => {
         sortForecast();
     }, [])
@@ -70,7 +71,7 @@ const DetailsComponent = ({ forecast }) => {
     }
 
     return (
-        <View>
+        <View style={{ minHeight: "100%"}}>
             <Text style={styles.heading}>
                 {forecast.city.name}, {forecast.city.country}
             </Text>
@@ -135,6 +136,7 @@ const DetailsComponent = ({ forecast }) => {
                     return <DayHeader day={days[day]} key={index} />
                 })
             }
+            
         </View>
     )
 }

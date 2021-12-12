@@ -3,20 +3,29 @@ import { StyleSheet, View, Text } from 'react-native'
 
 import { format, formatDistance } from "date-fns";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
+import { faSun, faMoon, faWater, faWind, faEye, faCompressAlt } from '@fortawesome/free-solid-svg-icons';
 
 import titleCase from '../utils/titleCase';
 
 import DayHeader from './DayHeader';
 import StatsCard from './StatsCard';
 
-const DetailsComponent = ({ forecast }) => {
+const DetailsComponent = ({ forecast, weather, settings }) => {
+
+    const windDirection = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW", "N"];
 
     const [loading, setLoading] = useState(true);
     const [days, setDays] = useState(null);
     const [showSunFocus, setShowSunFocus] = useState("both");
 
+    const kmToM = (num) => {
+        return num / 1.609;
+    }
+
     const sortForecast = () => {
+
+        console.log(weather)
+
         let sortedDays = {};
         for (let date of forecast.list) {
             let tempDate = date.dt_txt.split(" ")[0];
@@ -48,7 +57,7 @@ const DetailsComponent = ({ forecast }) => {
     const calculateOffset = (time) => {
         let d = new Date();
         return new Date(
-            new Date(time*1000).getTime() + // Get the Unix timestamp
+            new Date(time * 1000).getTime() + // Get the Unix timestamp
             (d.getTimezoneOffset() * 60000) + // Add the current TZ offset (now it's 'UTC')
             (forecast.city.timezone * 1000) // finally add the timezone offset we need.
         );
@@ -71,12 +80,12 @@ const DetailsComponent = ({ forecast }) => {
     }
 
     return (
-        <View style={{ minHeight: "100%"}}>
+        <View style={{ minHeight: "100%" }}>
             <Text style={styles.heading}>
                 {forecast.city.name}, {forecast.city.country}
             </Text>
             <Text style={styles.subHeading}>
-                {format(calculateOffset(new Date().getTime()/1000), "eeee, MMM do, y")}
+                {format(calculateOffset(new Date().getTime() / 1000), "eeee, MMM do, y")}
             </Text>
             <StatsCard>
                 <Text style={styles.text}>
@@ -87,13 +96,13 @@ const DetailsComponent = ({ forecast }) => {
             <View style={styles.sideBySide}>
                 {(showSunFocus === "sunrise" || showSunFocus === "both") &&
                     <StatsCard>
-                        
+
                         {showSunFocus === "sunrise" &&
                             <Text style={[styles.timeText, styles.text]}>
                                 {titleCase(formatDistance(forecast.city.sunrise * 1000, new Date(), { addSuffix: true }))}
                             </Text>
                         }
-                        {showSunFocus === "both" && 
+                        {showSunFocus === "both" &&
                             <Text style={[styles.timeText, styles.text]}>
                                 {format(calculateOffset(forecast.city.sunrise), 'h:mm aa')}
                             </Text>
@@ -114,7 +123,7 @@ const DetailsComponent = ({ forecast }) => {
                                 {titleCase(formatDistance(forecast.city.sunset * 1000, new Date(), { addSuffix: true }))}
                             </Text>
                         }
-                        {showSunFocus === "both" && 
+                        {showSunFocus === "both" &&
                             <Text style={[styles.timeText, styles.text]}>
                                 {format(calculateOffset(forecast.city.sunset), 'h:mm aa')}
                             </Text>
@@ -128,15 +137,89 @@ const DetailsComponent = ({ forecast }) => {
                     </StatsCard>
                 }
             </View>
-            <View style={styles.sideBySide}>
 
-            </View>
+            <StatsCard>
+                <Text style={[styles.timeText, styles.text]}>
+                    {weather.main.humidity}
+                </Text>
+
+                <View style={styles.iconAndText}>
+                    <FontAwesomeIcon icon={faWater} color={'grey'} />
+                    <Text style={styles.text}>
+                        Humidity
+                    </Text>
+                </View>
+            </StatsCard>
+
+            <StatsCard>
+                <Text style={[styles.timeText, styles.text]}>
+                    {windDirection[Math.round((weather.wind.deg % 360) / 22.5)]} &nbsp;
+                        {
+                            (settings.measurement === "metric" ? 
+                            (weather.wind.speed * 3.6) : 
+                            kmToM(weather.wind.speed * 3.6)).toFixed(2)
+                        } 
+                        &nbsp;
+                        { settings.measurement === "metric" ? "km/hr" : "mph" }
+                </Text>
+
+                <View style={styles.iconAndText}>
+                    <FontAwesomeIcon icon={faWind} color={'grey'} />
+                    <Text style={styles.text}>
+                        Wind Speed
+                    </Text>
+                </View>
+            </StatsCard>
+
+            <StatsCard>
+                <Text style={[styles.timeText, styles.text]}>
+                        {
+                            (settings.measurement === "metric" ? 
+                            (weather.visibility / 1000) : 
+                            kmToM(weather.visibility / 1000)).toFixed(2)
+                        } 
+                        &nbsp;
+                        { settings.measurement === "metric" ? "km" : "miles" }
+                </Text>
+
+                <View style={styles.iconAndText}>
+                    <FontAwesomeIcon icon={faEye} color={'grey'} />
+                    <Text style={styles.text}>
+                        Visibility
+                    </Text>
+                </View>
+            </StatsCard>
+
+            <StatsCard>
+                <Text style={[styles.timeText, styles.text]}>
+                        {
+                            (settings.measurement === "metric" ? 
+                            weather.main.pressure : 
+                            weather.main.pressure * 2.0885).toFixed(2)
+                        } 
+                        &nbsp;
+                        { settings.measurement === "metric" ? "hPa" : "psf" }
+                </Text>
+
+                <View style={styles.iconAndText}>
+                    <FontAwesomeIcon icon={faCompressAlt} color={'grey'} />
+                    <Text style={styles.text}>
+                        Air Pressure
+                    </Text>
+                </View>
+            </StatsCard>
+
+
+            <Text style={[styles.text, { fontSize: 20, textAlign: "center" }]}>
+                Daily Forecast
+            </Text>
+
             {days !== false &&
                 Object.keys(days).map((day, index) => {
                     return <DayHeader day={days[day]} key={index} />
                 })
             }
-            
+
         </View>
     )
 }
@@ -160,17 +243,17 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "white",
-        textAlign: "center"
+        textAlign: "center",
+        padding: 5
     },
     sideBySide: {
         flexDirection: "row",
-        justifyContent: "space-around",
-        width: "100%"
+        justifyContent: "space-around"
     },
     iconAndText: {
         marginTop: 5,
-        justifyContent: "space-around", 
-        alignItems: "center", 
+        justifyContent: "center",
+        alignItems: "center",
         flexDirection: "row"
     }
 })

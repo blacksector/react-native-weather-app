@@ -4,7 +4,6 @@ import { useWindowDimensions } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from '../utils/api';
 import * as WebBrowser from 'expo-web-browser';
 
@@ -25,22 +24,25 @@ function CityView({ city, setHideIcons }) {
 
     const api = new API();
 
-    const [units, setUnits] = useState("celsius");
     const [randomImage, setRandomImage] = useState(Math.floor(Math.random() * 10));
+    const [settings, setSettings] = useState({
+        units: "celsius",
+        measurement: "metric"
+    });
 
     const { width: windowWidth, height: windowHeight } = useWindowDimensions();
     const bottomSheetRef = useRef();
 
     useEffect(async () => {
-        let settings = await getSettings();
-        setUnits(settings.units || "celsius");
+        let settingsData = await getSettings();
+        setSettings({...settings, ...settingsData});
     }, [])
 
     useFocusEffect(
         useCallback(() => {
             async function checkSettingsUpdate() {
-                const settings = await getSettings();
-                setUnits(settings?.units || "celsius");
+                let settingsData = await getSettings();
+                setSettings({...settings, ...settingsData});
             }
             checkSettingsUpdate();
             return () => { };
@@ -64,10 +66,10 @@ function CityView({ city, setHideIcons }) {
                         <View style={{ flexGrow: 4, marginTop: 85 }}>
                             <View style={styles.tempContainer}>
                                 <Text style={styles.tempText}>
-                                    {Math.round(convertUnits(units, city.data.weather.main.temp) || 0)}
+                                    {Math.round(convertUnits(settings.units, city.data.weather.main.temp) || 0)}
                                 </Text>
                                 <Text style={styles.degrees}>
-                                    &deg;{units === "celsius" ? "C" : units === "fahrenheit" ? "F" : "K"}
+                                    &deg;{settings.units === "celsius" ? "C" : settings.units === "fahrenheit" ? "F" : "K"}
                                 </Text>
 
                             </View>
@@ -81,8 +83,8 @@ function CityView({ city, setHideIcons }) {
                                     {titleCase(city.data.weather.weather[0].description)}
                                 </Text>
                                 <Text style={styles.feelsLike}>
-                                    <Text>Feels Like {Math.round(convertUnits(units, city.data.weather.main.feels_like) || 0)}</Text>
-                                    <Text>&deg;{units === "celsius" ? "C" : units === "fahrenheit" ? "F" : "K"}</Text>
+                                    <Text>Feels Like {Math.round(convertUnits(settings.units, city.data.weather.main.feels_like) || 0)}</Text>
+                                    <Text>&deg;{settings.units === "celsius" ? "C" : settings.units === "fahrenheit" ? "F" : "K"}</Text>
                                 </Text>
                             </View>
                         </View>
@@ -108,12 +110,12 @@ function CityView({ city, setHideIcons }) {
                                 paddingTop: 40,
                                 paddingLeft: 10,
                                 paddingRight: 10,
-                                height: windowHeight,
-                                maxWidth: windowHeight - (windowHeight * 0.20),
+                                height: windowHeight - (windowHeight * 0.21),
+                                maxWidth: windowWidth,
                                 zIndex: 500
                             }}>
                                 <View>
-                                    <DetailsComponent forecast={city.data.forecast} />
+                                    <DetailsComponent settings={settings} forecast={city.data.forecast} weather={city.data.weather} />
                                     <View ><Text style={{
                                         marginTop: 25
                                     }}>Hello World!</Text></View>

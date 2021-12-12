@@ -58,19 +58,37 @@ const Menu = () => {
                                     borderColor={"#1C1C1E"}
                                     hasPadding
                                 />
+
+                                <View style={{ marginTop: 30, marginBottom: 5 }}>
+                                    {data && <><Text style={[{ color: colors.text }, styles.cityTitle]}>Measurement</Text></>}
+                                </View>
+                                <SwitchSelector
+                                    options={[
+                                        { label: "Metric", value: "metric" },
+                                        { label: "Imperial", value: "imperial" }
+                                    ]}
+                                    initial={settings.measurement === "imperial" ? 1 : 0}
+                                    onPress={value => updateSettings({ measurement: value })}
+                                    textColor={"black"} //'#7a44cf'
+                                    selectedColor={"white"}
+                                    buttonColor={"#1C1C1E"}
+                                    borderColor={"#1C1C1E"}
+                                    hasPadding
+                                />
+
                                 <View style={{ marginTop: 30 }}>
                                     {data && <><Text style={[{ color: colors.text }, styles.cityTitle]}>Cities</Text></>}
                                 </View>
                             </>
                         }
-                        renderItem={({item, index}) => {
+                        renderItem={({ item, index }) => {
                             return (
                                 <StatsCard>
                                     <View style={styles.sideBySide}>
                                         <Text style={[{ color: colors.text }, styles.cityNames]}>{item.data.weather.name}</Text>
                                         {!item.isLocation &&
                                             <Button
-                                                onPress={async () => { 
+                                                onPress={async () => {
                                                     if (await removeCity(item.data.weather.id)) {
                                                         let newData = data
                                                         newData.data.splice(index, 1)

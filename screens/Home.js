@@ -12,7 +12,6 @@ import Splash from './Splash';
 
 import FeatherIconMenu from '../assets/menu.png';
 import FeatherIconPlus from '../assets/plus.png';
-import FeatherIconSearch from '../assets/search.png';
 import CityView from '../components/CityView';
 
 import * as Location from 'expo-location';
@@ -173,7 +172,7 @@ const Home = ({ navigation }) => {
                 setAllData(typeof allWeatherData?.retrieved === 'number' ? allWeatherData : false);
             }
             checkWeatherDataUpdate();
-            return () => { };
+            return () => { checkWeatherDataUpdate() };
         }, [])
     );
 

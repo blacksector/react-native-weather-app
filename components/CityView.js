@@ -21,7 +21,7 @@ function CityView({ city, setHideIcons }) {
 
     const api = new API();
     
-    const [units, setUnits] = useState(null);
+    const [units, setUnits] = useState("celsius");
     const [randomImage, setRandomImage] = useState(Math.floor(Math.random() * 10));
 
     const { width: windowWidth, height: windowHeight } = useWindowDimensions();
@@ -41,7 +41,7 @@ function CityView({ city, setHideIcons }) {
             }
             checkSettingsUpdate();
             return () => { };
-        }, [units])
+        }, [])
     );
 
     const getBackground = (city) => {

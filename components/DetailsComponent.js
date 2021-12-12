@@ -72,7 +72,7 @@ const DetailsComponent = ({ forecast }) => {
     return (
         <View>
             <Text style={styles.heading}>
-                {forecast.city.name} {forecast.city.country}
+                {forecast.city.name}, {forecast.city.country}
             </Text>
             <Text style={styles.subHeading}>
                 {format(calculateOffset(new Date().getTime()/1000), "eeee, MMM do, y")}

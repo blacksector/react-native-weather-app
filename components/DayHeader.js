@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
+
+import { useFocusEffect } from '@react-navigation/native';
+import { getSettings } from '../utils/store';
 
 import convertUnits from '../utils/convertUnits';
 import titleCase from '../utils/titleCase';
@@ -16,7 +19,25 @@ const DayHeader = ({ day }) => {
         highest: null,
         icon: "",
         condition: ""
-    })
+    });
+
+    useEffect(async () => {
+        let settings = await getSettings();
+        console.log(settings);
+        setUnits(settings.units || "celsius");
+    }, [])
+
+    useFocusEffect(
+        useCallback(() => {
+            async function checkSettingsUpdate() {
+                const settings = await getSettings();
+                setUnits(settings?.units || "celsius");
+            }
+            checkSettingsUpdate();
+            return () => { checkSettingsUpdate(); };
+        }, [])
+    );
+
 
     const createStats = () => {
         let lowest = null;

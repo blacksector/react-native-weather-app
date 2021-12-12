@@ -43,19 +43,26 @@ const addCity = async (cityName) => {
     const data = await getWeather();
     return api.get([cityName])
         .then(async (resp) => {
-            // First let's see if the city has already been
-            // added to our list:
-            let added = false;
-            for (let i = 0; i < data.data.length; i++) {
-                if (data.data[i].data.weather.id === resp[0].data.weather.id) {
-                    // Replace the current data with updated information
-                    data.data[i] = resp[0];
-                    added = true;
-                    break;
+            
+            if (Object.keys(data).length !== 0) {
+                let added = false;
+                // First let's see if the city has already been
+                // added to our list, if it has, overwrite the data
+                // and then set it into storage.
+                for (let i = 0; i < data.data.length; i++) {
+                    if (data.data[i].data.weather.id === resp[0].data.weather.id) {
+                        // Replace the current data with updated information
+                        data.data[i] = resp[0];
+                        added = true;
+                        break;
+                    }
                 }
+                if (!added) { data.data.push(resp[0]); }
+                await updateWeather(data);
+            } else {
+                await updateWeather({ data: resp, retrieved: Date.now()  });
             }
-            if (!added) { data.data.push(resp[0]); }
-            await updateWeather(data);
+            
             return true;
         })
         .catch(err => {

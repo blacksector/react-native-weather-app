@@ -178,7 +178,8 @@ const Home = ({ navigation }) => {
         useCallback(() => {
             async function checkWeatherDataUpdate() {
                 const allWeatherData = await getWeather();
-                if (allWeatherData.data.length === 0) {
+                console.log(allWeatherData);
+                if (Object.keys(allWeatherData).length === 0 || allWeatherData?.data?.length === 0) {
                     setErrorMsg('It seems like you do not have a city added, how about we add one?');
                 } else {
                     setErrorMsg(null);

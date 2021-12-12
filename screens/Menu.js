@@ -2,17 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, ScrollView, FlatList, Button, SafeAreaView, Animated } from 'react-native'
 
 import { useTheme } from '@react-navigation/native'
-
 import API from '../utils/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { formatDistance } from "date-fns";
 import StatsCard from '../components/StatsCard';
-
-import SwitchSelector from "react-native-switch-selector";
-
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons';
 
 import { getSettings, updateSettings, getWeather, removeCity } from '../utils/store';
 
@@ -73,7 +66,7 @@ const Menu = () => {
                                 <StatsCard>
                                     <View style={styles.sideBySide}>
                                         <Text style={[{ color: colors.text }, styles.cityNames]}>{item.data.weather.name}</Text>
-                                        {!item.data.isLocation &&
+                                        {!item.isLocation &&
                                             <Button
                                                 onPress={async () => { 
                                                     if (await removeCity(item.data.weather.id)) {

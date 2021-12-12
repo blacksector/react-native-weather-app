@@ -43,7 +43,6 @@ const AddCity = ({ navigation }) => {
                     placeholder="Search..."
                 />
             </StatsCard>
-            <Text style={{ color: "white" }}>{search}</Text>
             <FlatList
                 data={filtered}
                 extraData={refresh}

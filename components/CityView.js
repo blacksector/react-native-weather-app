@@ -152,7 +152,7 @@ function CityView({ city, setHideIcons }) {
 
 const shadow = {
     textShadowRadius: 5,
-    textShadowOffset: { width: 2, height: 2 },
+    textShadowOffset: { width: 3, height: 5 },
     textShadowColor: "#333333"
 }
 

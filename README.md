@@ -15,11 +15,11 @@
     <a href="#"><strong>App Download Link - Coming Soon</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="#about-the-project">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/blacksector/react-native-weather-app/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/blacksector/react-native-weather-app/issues">Request Feature</a>
   </p>
 </div>
 
@@ -161,7 +161,7 @@ Contributions are what make the open source community such an amazing place to l
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
 
-<small>Text used from [Best-README-Template](https://github.com/othneildrew/Best-README-Template/blob/master/README.md).</small>
+_Text used from [Best-README-Template](https://github.com/othneildrew/Best-README-Template/blob/master/README.md)._
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
